@@ -35,7 +35,6 @@ from normalization import BatchNorm
 from randomSample import RandPerm
 from loss import MSELoss
 from data import Data
-from gpu import GPU
 
 def findFpropKernel(seq):
 	#Find the last fprop kernel with the same seqId

@@ -181,6 +181,7 @@ class MaskedScatter(OperatorLayerBase):
 		self.shape = dst['shape']
 		self.type = dst['dtype']
 		self.seqId = d.seqId
+		self.sub = d.sub
 
 	def params(self):
 		p = OrderedDict([('T', self.shape),('type', self.type)])
@@ -207,7 +208,7 @@ class MaskedScatter(OperatorLayerBase):
 		#mask (uint8)
 		b += elems
 
-		if (self.seqId > 0):
+		if (self.sub > 0):
 			b = 0
 		return b
 
@@ -335,6 +336,7 @@ class IndexSelect(OperatorLayerBase):
 		#determine the shape of the output tensor
 		shape = list(self.shape)
 		shape[self.dim] = self.indices
+		shape = tuple(shape)
 
 		b = 0
 

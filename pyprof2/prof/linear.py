@@ -12,7 +12,7 @@ class Linear(OperatorLayerBase):
 	'''
 
 	gemmKernels = ["gemm", "gemv", "dot_kernel", "splitKreduce_kernel", "reduce_1Block_kernel"]
-	biasKernels = ["kernelReduceContigDim", "kernelReduceNoncontigDim_shared", "elementwise_kernel", "reduce_kernel"]
+	biasKernels = ["kernelReduceContigDim", "kernelReduceNoncontigDim_shared", "elementwise_kernel", "reduce_kernel", "kernelPointwiseApply2"]
 
 	def setXWBMNK(self, args):
 		x = None
