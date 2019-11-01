@@ -233,6 +233,7 @@ class Nonzero(OperatorLayerBase):
 		self.shape = arg['shape']
 		self.type = arg['dtype']
 		self.seqId = d.seqId
+		self.sub = d.sub
 
 	def params(self):
 		p = OrderedDict([('T', self.shape),('type', self.type)])
@@ -260,7 +261,7 @@ class Nonzero(OperatorLayerBase):
 		#in the worst case, the output is a (elems x dim) tensor of type "long"
 		b += elems * dim * Utility.typeToBytes("int64")
 
-		if self.seqId > 0:
+		if self.sub > 0:
 			return 0
 		else:
 			return b
