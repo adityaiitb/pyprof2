@@ -112,7 +112,7 @@ def main():
 		optimizer = torch.optim.SGD(net.parameters(), lr = 0.01, momentum=0.9)
 	elif (args.o == "adam"):
 		optimizer = FusedAdam(net.parameters())
-		optimizer = FP16_Optimizer(optimizer)
+		#optimizer = FP16_Optimizer(optimizer)
 	else:
 		assert False
 
