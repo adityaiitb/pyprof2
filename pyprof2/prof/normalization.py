@@ -16,7 +16,7 @@ class BatchNorm(OperatorLayerBase):
 		self.args = args
 
 		assert (op == "batch_norm")
-		assert (len(args) == 8)
+		assert (len(args) >= 1)
 		i = args[0]
 		assert (i['type'] == "tensor")
 

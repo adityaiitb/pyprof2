@@ -24,8 +24,15 @@ class Mean(OperatorLayerBase):
 		assert (len(args) <= 2)
 		i = args[0]
 
-		self.shape = i['shape']
-		self.type = i['dtype']
+		# The input can be a scalar or a tensor
+		if 'shape' in i: # tensor
+			self.shape = i['shape']
+			self.type = i['dtype']
+		else: # scalar
+			assert ('value' in i)
+			self.shape = (1,)
+			self.type = i['type']
+
 		self.dir = d.dir
 		self.sub = d.sub
 
