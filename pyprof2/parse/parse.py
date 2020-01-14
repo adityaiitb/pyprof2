@@ -11,6 +11,7 @@ from tqdm import tqdm
 from db import DB
 from kernel import Kernel
 from nvvp import NVVP
+from nsight import Nsight
 
 def parseArgs():
 	parser = argparse.ArgumentParser(prog=sys.argv[0], description="Parse SQL (nvvp) db.")
@@ -27,6 +28,7 @@ def main():
 
 	db = DB(args.file)
 	nvvp = NVVP(db)
+	#nvvp = Nsight(db)
 
 	kInfo = nvvp.getKernelInfo()
 	if len(kInfo) == 0:
