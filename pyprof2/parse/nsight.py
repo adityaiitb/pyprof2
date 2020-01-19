@@ -62,26 +62,20 @@ class Nsight(object):
 
 		#First look in the runtime table
 		#cmd = "select start,end,processId,threadId from {} where correlationId={}".format(self.runtimeT, corrId);
-		cmd = "select start,end from {} where correlationId={}".format(self.runtimeT, corrId);
+		cmd = "select start,end,globalTid from {} where correlationId={}".format(self.runtimeT, corrId);
 		result = self.db.select(cmd)
-		assert (len(result) <= 1)
-
-		#if (len(result) == 0):
-			#Look in the driver table
-			#cmd = "select start,end,processId,threadId from {} where correlationId={}".format(self.driverT, corrId);
-			#result = self.db.select(cmd)
-
 		assert (len(result) == 1)
+
 		info = result[0]
 		start = info['start']
 		end = info['end']
+		# globalId = f(pid, tid). Call it objId (for legacy).
+		objId = info['globalTid']
+		pid = -1
+		tid = objId & 0x00000000ffffff # not sure, but appears to be.
 
-		#pid = info['processId']
-		#tid = info['threadId']
-		#tid = tid & 0xffffffff	#convert to unsigned
 		assert (end > start)
-		#return [start, end, pid, tid]
-		return [start, end, -1, -1]
+		return [start, end, pid, tid, objId]
 
 	def getKernelInfo(self):
 		"""
@@ -125,8 +119,8 @@ class Nsight(object):
 			This speeds up future queries.
 			"""
 			margin = 0
-			#cmd = 'DELETE FROM marker WHERE objectId = "{}" AND endTime < {}'.format(objId, sTime - margin)
-			cmd = 'DELETE FROM marker WHERE end < {}'.format(sTime - margin)
+			cmd = 'DELETE FROM marker WHERE globalTid = {} AND end < {}'.format(objId, sTime - margin)
+			#cmd = 'DELETE FROM marker WHERE end < {}'.format(sTime - margin)
 			self.db.execute(cmd)
 
 		def getLayerName(mlist):
@@ -210,9 +204,10 @@ class Nsight(object):
 
 		#Find all encapsulating markers
 		cmd = 'SELECT text from marker where \
+				globalTid = {} and \
 				start < {} and \
 				end > {} \
-				ORDER BY start ASC'.format(startTime, endTime)
+				ORDER BY start ASC'.format(objId, startTime, endTime)
 		result = self.db.select(cmd)
 
 		#Bin markers into different lists
@@ -275,7 +270,7 @@ class Nsight(object):
 			'''
 			pass
 
-		#delete(objId, startTime)
-		delete("", startTime)
+		delete(objId, startTime)
+		#delete("", startTime)
 
 		return layerMarkers, filterTrace(traceMarkers), reprMarkers, pyprofMarkers, seqMarkers, otherMarkers, altSeqMarkers, getSeqId(seqMarkers), getSeqId(altSeqMarkers), getLayerName(layerMarkers)
