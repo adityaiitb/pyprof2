@@ -1,4 +1,5 @@
 import sys
+import struct, binascii
 
 class NVVP(object):
 	"""
@@ -15,7 +16,7 @@ class NVVP(object):
 		self.db = db
 		self.markerId = 0
 
-	def encode_object_id(pid, tid):
+	def encode_object_id(self, pid, tid):
 		"""
 		Given process id (pid) and thread id (tid), return the object id.
 		object id = pid (little endian 4 bytes) + tid (little endian 8 bytes)
@@ -95,7 +96,7 @@ class NVVP(object):
 		pid = info['processId']
 		tid = info['threadId']
 		tid = tid & 0xffffffff	#convert to unsigned
-		objId = encode_object_id(pid, tid)
+		objId = self.encode_object_id(pid, tid)
 		assert (end > start)
 		return [start, end, pid, tid, objId]
 
