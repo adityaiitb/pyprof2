@@ -1,20 +1,35 @@
 import torch
-import fused_adam_cuda
-from apex.optimizers import FusedAdam, FP16_Optimizer
+from apex.optimizers import FusedAdam
+import amp_C
 import pyprof2
 
 pyprof2.init()
-pyprof2.wrap(fused_adam_cuda, 'adam')
+# Wrap the custom fused multi tensor Adam implementation
+pyprof2.wrap(amp_C, 'multi_tensor_adam')
 
-model = torch.nn.Linear(10, 20).cuda().half()
+inp = 1024
+hid = 2048
+out = 4096
+batch = 128
+
+# Model
+model = torch.nn.Sequential(
+			torch.nn.Linear(inp, hid).cuda().half(),
+			torch.nn.ReLU(),
+			torch.nn.Linear(hid, out).cuda().half()
+		)
+# Loss
 criterion = torch.nn.CrossEntropyLoss().cuda()
+# Adam optimizer
 optimizer = FusedAdam(model.parameters())
-optimizer = FP16_Optimizer(optimizer)
+# Input
+x = torch.ones(batch, inp).cuda().half()
+# Target
+target = torch.empty(batch, dtype=torch.long).random_(out).cuda()
 
-x = torch.ones(32, 10).cuda().half()
-target = torch.empty(32, dtype=torch.long).random_(20).cuda()
-y = model(x)
-loss = criterion(y, target)
-optimizer.zero_grad()
-loss.backward()
-optimizer.step()
+with torch.autograd.profiler.emit_nvtx():
+	y = model(x)
+	loss = criterion(y, target)
+	optimizer.zero_grad()
+	loss.backward()
+	optimizer.step()
