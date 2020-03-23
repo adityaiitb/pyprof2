@@ -167,7 +167,13 @@ class NVVP(object):
 			for m in mlist:
 				assert(", seq = " in m)
 				seq = int(m.split("=")[1])
-				ids.append(seq)
+				if bprop:
+					if ("Backward, seq =" in m) or ("Backward0, seq =" in m) or ("Backward1, seq =" in m): # ignoring "_backward, seq ="
+						ids.append(seq)
+					else:
+						pass
+				else:
+					ids.append(seq)
 
 			#Remove duplicates
 			ids = list(set(ids))
@@ -241,7 +247,7 @@ class NVVP(object):
 			if m.find("CheckpointFunctionBackward") >= 0:
 				continue
 
-			if ("_backward, seq =" in m) or ("Backward, seq =" in m) or ("Backward0, seq =" in m):
+			if ("_backward, seq =" in m) or ("Backward, seq =" in m) or ("Backward0, seq =" in m) or ("Backward1, seq =" in m):
 				bprop = True
 
 			if ("mod" in m) and ("op" in m) and ("args" in m) and ("type" in m):
