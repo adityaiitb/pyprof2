@@ -146,7 +146,7 @@ class Bmm(OperatorLayerBase):
 
 class Matmul(OperatorLayerBase):
 
-	NON_GEMM = ["kernelPointwiseApply2", "reduce_1Block_kernel", "elementwise_kernel"]
+	NON_GEMM = ["kernelPointwiseApply2", "reduce_1Block_kernel", "elementwise_kernel", "splitKreduce_kernel"]
 	NON_TC = NON_GEMM + ["dot_kernel"]
 
 	def __init__(self, d):
