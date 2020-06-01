@@ -21,7 +21,7 @@ class Addmm(OperatorLayerBase):
 		assert (mod in ["torch", "Tensor",])
 		assert (op in ["addmm", "addmm_",])
 
-		#Get alpha and beta
+		# Get alpha and beta
 		alpha = 1
 		beta = 1
 		if any(x['name'] == 'alpha' for x in args):
@@ -35,8 +35,11 @@ class Addmm(OperatorLayerBase):
 		self.alpha = alpha
 		self.beta = beta
 
-		#Filter out named parameters
+		# Filter out named parameters
 		args = list(filter(lambda x : x['name'] == '', args))
+
+		# Filter out parameters which are not tensors
+		args = list(filter(lambda x : x['type'] == 'tensor', args))
 
 		assert (len(args) == 3)
 		C,A,B = args
