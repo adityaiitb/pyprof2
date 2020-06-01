@@ -19,7 +19,7 @@ class MSELoss(OperatorLayerBase):
 
 		assert (mod == "torch.nn.functional")
 		assert (op == "mse_loss")
-		assert (len(args) == 3)
+		assert (len(args) >= 2)
 
 		#Get input, target and reduction
 		if (args[0]['name'] == ""):
@@ -32,10 +32,13 @@ class MSELoss(OperatorLayerBase):
 		else:
 			y = list(filter(lambda x : x['name'] == "target", args))[0]
 
-		if (args[2]['name'] == ""):
-			r = args[2]
+		if len(args) > 2:
+			if (args[2]['name'] == ""):
+				r = args[2]
+			else:
+				r = list(filter(lambda x : x['name'] == "reduction", args))[0]
 		else:
-			r = list(filter(lambda x : x['name'] == "reduction", args))[0]
+			r = {'name': 'reduction', 'value': 'mean', 'type': 'str'}
 
 		assert (x['type'] == y['type'] == "tensor")
 		assert (x['shape'] == y['shape'])
