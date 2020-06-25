@@ -17,7 +17,7 @@ class RandPerm(OperatorLayerBase):
 
 		assert (mod == "torch")
 		assert (op == "randperm")
-		assert (len(args) == 1)
+		assert (len(args) in (1, 2))
 		n = args[0]
 		assert n['type'] == "int"
 		self.n = n['value']
